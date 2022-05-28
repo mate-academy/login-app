@@ -13,7 +13,7 @@ export const AccountActivationPage = () => {
     activate(activationToken)
       .then(() => navigate('/'))
       .catch(error => {
-        setError(error?.response?.data?.message);
+        setError(error.response?.data?.message || `Wrong activation link`);
       });
   }, []);
 
@@ -22,7 +22,9 @@ export const AccountActivationPage = () => {
       <h1 className="title">Account activation</h1>
 
       {error ? (
-        <p>{error}</p>
+        <p className="notification is-danger is-light">
+          {error}
+        </p>
       ) : (
         <p>Please wait...</p>
       )}

@@ -42,7 +42,7 @@ export const RegistrationPage = () => {
   }
 
   return (
-    <section className="section">
+    <>
       <Formik
         initialValues={{
           email: '',
@@ -162,6 +162,6 @@ export const RegistrationPage = () => {
       </Formik>
 
       {error && <p className="notification is-danger is-light">{error}</p>}
-    </section>
+    </>
   );
 };

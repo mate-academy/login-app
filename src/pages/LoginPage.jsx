@@ -32,7 +32,7 @@ export const LoginPage = () => {
   const { login } = useContext(AuthContext);
 
   return (
-    <section className="section">
+    <>
       <Formik
         initialValues={{
           email: '',
@@ -139,6 +139,6 @@ export const LoginPage = () => {
       </Formik>
 
       {error && <p className="notification is-danger is-light">{error}</p>}
-    </section>
+    </>
   );
 };
