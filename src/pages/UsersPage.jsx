@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import userAPI from '../http/user.js';
+import { userService } from '../services/userService.js';
 
 export const UsersPage = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    userAPI.getAll()
+    userService.getAll()
       .then(setUsers);
   }, [])
 

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import authAPI from '../http/auth.js';
+import { accessTokenService } from '../services/accessTokenService.js';
+import { authService } from '../services/authService.js';
 
 export const AuthContext = React.createContext({});
 
@@ -7,41 +8,25 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isChecked, setChecked] = useState(false);
 
-  function saveToken(accessToken) {
-    localStorage.setItem('accessToken', accessToken);
-  }
+  async function activate(activationToken) {
+    const { accessToken, user } = await authService.activate(activationToken);
 
-  async function register({ email, password }) {
-    try {
-      const response = await authAPI.register({ email, password });
-      const { accessToken, user } = response;
-
-      saveToken(accessToken);
-      setUser(user);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async function login({ email, password }) {
-    const { accessToken, user } = await authAPI.login({ email, password });
-
-    saveToken(accessToken);
+    accessTokenService.save(accessToken);
     setUser(user);
   }
 
-  async function activate(activationToken) {
-    const { accessToken, user } = await authAPI.activate(activationToken);
+  async function login({ email, password }) {
+    const { accessToken, user } = await authService.login({ email, password });
 
-    saveToken(accessToken);
+    accessTokenService.save(accessToken);
     setUser(user);
   }
 
   async function logout() {
     try {
-      await authAPI.logout();
+      await authService.logout();
 
-      localStorage.removeItem('accessToken');
+      accessTokenService.remove();
       setUser(null);
     } catch (error) {
       console.log(error.response?.data?.message);
@@ -50,19 +35,19 @@ export const AuthProvider = ({ children }) => {
 
   async function checkAuth() {
     try {
-      const { accessToken, user } = await authAPI.refresh();
+      const { accessToken, user } = await authService.refresh();
 
-      saveToken(accessToken);
+      accessTokenService.save(accessToken);
       setUser(user);
     } catch (error) {
-      console.log(error.response?.data?.message);
+      console.log('User is not authentincated');
     } finally {
       setChecked(true);
     }
   }
 
   const value = useMemo(() => {
-    return { isChecked, user, checkAuth, register, activate, login, logout };
+    return { isChecked, user, checkAuth, activate, login, logout };
   }, [user, isChecked]);
 
   return (

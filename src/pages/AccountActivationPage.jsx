@@ -1,21 +1,29 @@
 import { useContext, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { AuthContext } from '../components/AuthContext.jsx';
+import { Loader } from '../components/Loader.jsx';
 
 export const AccountActivationPage = () => {
   const [error, setError] = useState('');
+  const [done, setDone] = useState(false);
+
   const { activate } = useContext(AuthContext);
   const { activationToken } = useParams();
-  const navigate = useNavigate();
 
   useEffect(() => {
     activate(activationToken)
-      .then(() => navigate('/'))
       .catch(error => {
         setError(error.response?.data?.message || `Wrong activation link`);
+      })
+      .finally(() => {
+        setDone(true);
       });
   }, []);
+
+  if (!done) {
+    return <Loader />
+  }
 
   return (
     <>
@@ -26,7 +34,9 @@ export const AccountActivationPage = () => {
           {error}
         </p>
       ) : (
-        <p>Please wait...</p>
+        <p className="notification is-success is-light">
+          Your account is now active
+        </p>
       )}
     </>
   );

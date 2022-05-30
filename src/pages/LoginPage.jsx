@@ -18,7 +18,7 @@ function validateEmail(value) {
   }
 }
 
-const validatePassword = (value) => {
+function validatePassword(value) {
   if (!value) {
     return 'Password is required';
   }
@@ -39,7 +39,7 @@ export const LoginPage = () => {
           password: '',
         }}
         validateOnMount={true}
-        onSubmit={({ email, password }, formikHelpers) => {
+        onSubmit={({ email, password }) => {
           return login({ email, password })
             .then(() => {
               navigate(location.state.from || '/');
