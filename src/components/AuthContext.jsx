@@ -6,31 +6,13 @@ export const AuthContext = React.createContext({});
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [isChecked, setChecked] = useState(false);
+  const [isChecked, setChecked] = useState(true);
 
   async function activate(activationToken) {
     const { accessToken, user } = await authService.activate(activationToken);
 
     accessTokenService.save(accessToken);
     setUser(user);
-  }
-
-  async function login({ email, password }) {
-    const { accessToken, user } = await authService.login({ email, password });
-
-    accessTokenService.save(accessToken);
-    setUser(user);
-  }
-
-  async function logout() {
-    try {
-      await authService.logout();
-
-      accessTokenService.remove();
-      setUser(null);
-    } catch (error) {
-      console.log(error.response?.data?.message);
-    }
   }
 
   async function checkAuth() {
@@ -46,9 +28,28 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const value = useMemo(() => {
-    return { isChecked, user, checkAuth, activate, login, logout };
-  }, [user, isChecked]);
+  async function login({ email, password }) {
+    const { accessToken, user } = await authService.login({ email, password });
+
+    accessTokenService.save(accessToken);
+    setUser(user);
+  }
+
+  async function logout() {
+    await authService.logout();
+
+    accessTokenService.remove();
+    setUser(null);
+  }
+
+  const value = useMemo(() => ({
+    isChecked,
+    user,
+    checkAuth,
+    activate,
+    login,
+    logout,
+  }), [user, isChecked]);
 
   return (
     <AuthContext.Provider value={value}>

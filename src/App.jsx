@@ -12,9 +12,11 @@ import { RequireAuth } from './components/RequireAuth';
 import { UsersPage } from './pages/UsersPage';
 import { Loader } from './components/Loader.jsx';
 import { HomePage } from './pages/HomePage.jsx';
+import { usePageError } from './hooks/usePageError.js';
 
 function App() {
   const navigate = useNavigate();
+  const [error, setError] = usePageError();
   const { isChecked, user, logout, checkAuth } = useContext(AuthContext);
 
   useEffect(() => {
@@ -43,9 +45,14 @@ function App() {
             {user ? (
               <button
                 className="button is-light has-text-weight-bold"
-                onClick={async () => {
-                  await logout();
-                  navigate('/');
+                onClick={() => {
+                  logout()
+                    .then(() => {
+                      navigate('/');
+                    })
+                    .catch((error) => {
+                      setError(error.response?.data?.message);
+                    });
                 }}
               >
                 Log out
@@ -94,6 +101,8 @@ function App() {
           </Route>
         </Routes>
       </section>
+
+      {error && <p className="notification is-danger is-light">{error}</p>}
     </main>
   </>
 }

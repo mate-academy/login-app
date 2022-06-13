@@ -22,6 +22,10 @@ function validatePassword(value) {
   if (!value) {
     return 'Password is required';
   }
+    
+  if (value.length < 6) {
+    return 'At least 6 characters';
+  }
 };
 
 export const LoginPage = () => {
@@ -42,10 +46,10 @@ export const LoginPage = () => {
         onSubmit={({ email, password }) => {
           return login({ email, password })
             .then(() => {
-              navigate(location.state.from || '/');
+              navigate(location.state?.from?.pathname || '/');
             })
             .catch(error => {
-              setError(error?.response?.data?.message);
+              setError(error.response?.data?.message);
             });
         }}
       >

@@ -5,11 +5,11 @@ function get() {
 }
 
 function save(token) {
-  return localStorage.setItem('accessToken', token)
+  return localStorage.setItem(key, token)
 }
 
 function remove() {
-  return localStorage.removeItem('accessToken')
+  return localStorage.removeItem(key)
 }
 
 export const accessTokenService = { get, save, remove };

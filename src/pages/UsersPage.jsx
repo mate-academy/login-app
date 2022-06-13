@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
+import { usePageError } from '../hooks/usePageError.js';
 import { userService } from '../services/userService.js';
 
 export const UsersPage = () => {
+  const [error, setError] = usePageError('');
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     userService.getAll()
-      .then(setUsers);
+      .then(setUsers)
+      .catch(error => {
+        setError(error.message)
+      });
   }, [])
 
   return (
-    <section className="section">
+    <div className="content">
       <h1 className="title">Users</h1>
 
       <ul>
@@ -20,6 +25,8 @@ export const UsersPage = () => {
           </li>
         ))}
       </ul>
-    </section>
+
+      {error && <p className="notification is-danger is-light">{error}</p>}
+    </div>
   );
 };

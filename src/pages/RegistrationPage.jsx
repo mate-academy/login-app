@@ -57,19 +57,27 @@ export const RegistrationPage = () => {
               setRegistered(true);
             })
             .catch((error) => {
+              if (error.message) {
+                setError(error.message);
+              }
+
+              if (!error.response?.data) {
+                return;
+              }
+
               const { errors, message } = error.response.data;
 
               formikHelpers.setFieldError('email', errors?.email);
               formikHelpers.setFieldError('password', errors?.password);
 
-              if (!errors?.email && !errors?.password) {
+              if (message) {
                 setError(message);
               }
             })
             .finally(() => {
               formikHelpers.setSubmitting(false);
             })
-        }
+          }
         }
       >
         {({ touched, errors, isSubmitting }) => (
